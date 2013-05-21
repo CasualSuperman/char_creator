@@ -1,0 +1,190 @@
+<h1>Ability Scores</h1>
+
+<div id="titles">
+	<span class="stats">Str</span>
+	<span class="stats">Con</span>
+	<span class="stats">Dex</span>
+	<span class="stats">Int</span>
+	<span class="stats">Wis</span>
+	<span class="stats">Cha</span>
+</div>
+
+<div id="inputs">
+	<div><input class="ability" name="ability1"/></div>
+	<div><input class="ability" name="ability2"/></div>
+	<div><input class="ability" name="ability3"/></div>
+	<div class="spacer"> </div>
+	<div><input class="ability" name="ability4"/></div>
+	<div><input class="ability" name="ability5"/></div>
+	<div><input class="ability" name="ability6"/></div>
+</div>
+
+<span id="progress" style="display:none">Accept</span>
+
+<style>
+#titles, #inputs {
+	text-align: center;
+	width: 100%;
+}
+span.stats {
+	display: inline-block;
+	font-size: 4em;
+	text-align: center;
+	width: 16.25%;
+}
+#inputs {
+	margin-top: 5em;
+}
+#inputs div {
+	display: inline-block;
+	width: 33%;
+}
+#inputs .spacer {
+	display: block;
+	height: 5em;
+}
+input.ability {
+	border-radius: 50%;
+	font-size: 2em;
+	height: 1.5em;
+	position: absolute;
+	text-align: center;
+	width: 1.5em;
+}
+#progress {
+	background-color: #DDD;
+	border: 3px solid #AAA;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 3em;
+	padding: 0.25em;
+	margin: 1em;
+}
+</style>
+
+<script>
+(function() {
+var inProgress = loadInProgressCharacter();
+
+var stats = $("input.ability");
+var filledIn = 0;
+
+stats.draggable({
+	cancel: null
+}).on("click.edit", function() {
+	$(this).focus();
+});
+
+stats.draggable("disable");
+stats.change(handleInputChanged).keypress(handleInputChanged);
+
+$("#titles .stats").droppable({
+	drop: handleDrop
+});
+
+loadProgress();
+
+function handleInputChanged(e) {
+	if (!isNaN(e.target.value) && e.target.value.trim() !== "") {
+		$(e.target).draggable("enable");
+	} else {
+		$(e.target).draggable("disable");
+	}
+	if (e.keyCode > 57 || e.keyCode < 48 || $(e.target).val().length == 2) {
+		e.preventDefault();
+		return;
+	}
+	saveProgress();
+}
+
+function handleDrop(event, ui) {
+	var target = $(this);
+	var elem = ui.draggable;
+	filledIn++;
+
+	target.droppable("disable");
+	target.data("input", elem.prop("name"));
+	elem.data("attached", true);
+	elem.draggable("option", "revert", false);
+	elem.off("click.edit").blur();
+
+	var stat = target.text().toLowerCase();
+	var val  = elem.val();
+	inProgress.setAbility(stat, val);
+
+	var measurements = {
+		"font-size": elem.css("font-size"),
+		"background-color": elem.css("background-color"),
+		"border-width": parseInt(elem.css("border-width").replace("px", ""))
+	};
+
+	elem.css("font-size", "3em");
+	measurements.outerWidth = elem.outerWidth();
+	measurements.outerHeight = elem.outerHeight();
+	elem.css("font-size", measurements["font-size"]).animate({
+		"background-color": "rgba(238, 238, 238, 0)",
+		"border-width": 0,
+		"font-size": "3em",
+		"left": (target.offset().left + (target.width()/2) - (measurements.outerWidth/2)) + measurements["border-width"] + "px",
+		"top": (target.offset().top + target.outerHeight()) - measurements.outerHeight/3 - measurements["border-width"] + "px"
+	});
+
+	elem.draggable("option", "drag", function(event, ui) {
+		filledIn--;
+		inProgress.clearAbility(stat);
+		target.data("input", null);
+		target.droppable("enable");
+		$(this).draggable("option", "drag", null).animate({
+			"border-width": measurements["border-width"],
+			"background-color": measurements["background-color"],
+			"font-size": measurements["font-size"]
+		}).on("click.edit", function() {
+			$(this).focus();
+		});
+
+		checkReadyToProgress();
+		saveProgress();
+	});
+
+	saveProgress();
+	checkReadyToProgress();
+}
+
+function checkReadyToProgress() {
+	if (filledIn === abilities.length) {
+		$("#progress").fadeIn();
+	} else {
+		$("#progress").fadeOut();
+	}
+}
+
+function saveProgress() {
+	saveCurrentForm("stats", {
+		values:  Array.prototype.slice.apply(stats.map(function(i, input) {return $(input).val();})),
+		applied: Array.prototype.slice.apply($("#titles .stats").map(function(i, stat) { return $(stat).data("input") || ""; }))
+	});
+	saveInProgressCharacter(inProgress);
+}
+
+function loadProgress() {
+	loadCurrentForm("stats", function(data) {
+		var statHeaders = $("#titles .stats");
+		stats.each(function(i, input) {
+			$(input).val(data.values[i]).change();
+		});
+		$.each(data.applied, function(i, input) {
+			if (input !== "") {
+				var toDrag = $(stats.filter("[name=" + input + "]"));
+				toDrag.hide();
+				handleDrop.apply(statHeaders[i], [null, {
+					draggable: toDrag
+				}]);
+				toDrag.fadeIn();
+				toDrag.draggable("enable");
+			}
+		});
+	});
+}
+
+}());
+</script>

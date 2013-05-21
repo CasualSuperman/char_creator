@@ -1,0 +1,5 @@
+body{background:#eeeeee;color:#222222;font-family:'Noto Sans',sans-serif;margin:0;padding:0;}
+h1,h2,h3,h4,h5,h6{font-family:'Berkshire Swash',cursive;font-weight:400;}
+.title{font-size:300%;margin-top:0;padding-left:1em;}
+input,select{background-color:#DDD;border:3px solid #AAA;font-size:120%;outline:none;padding:0.25em;-webkit-appearance:none;}
+select:after{content:'v';position:relative;left:-2em;}

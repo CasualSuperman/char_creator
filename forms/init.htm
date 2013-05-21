@@ -1,0 +1,59 @@
+<div id="new_character">
+	<h1 id="create">Create New Character</h1>
+	<h1 id="resume">Resume Creating Character</h1>
+</div>
+<div id="old_character">
+	<h1 id="load">Load Existing Character</h1>
+</div>
+
+<style>
+#new_character,
+#old_character {
+	bottom: 0;
+	left: 0;
+	position: fixed;
+	right: 0;
+	text-align: center;
+	top: 0;
+}
+#new_character {
+	right: 50%;
+}
+
+#old_character {
+	left: 50%;
+}
+
+#create,
+#load,
+#resume {
+	margin: 40% 0 0 0;
+	margin-top: 40%;
+	cursor: pointer;
+}
+#resume {
+	display: none;
+	margin-top: 15%;
+}
+</style>
+
+<script>
+(function() {
+	if (hasCurrentForm()) {
+		$("#resume").show().click(function() {
+			var form = getCurrentForm();
+			$("#container").load("forms/" + form + ".htm");	
+		});
+		$("#create").css("margin-top", "30%");
+	}
+	$("#create").click(function() {
+		clearCurrentForm();
+		clearInProgressCharacter();
+		$("#container").load("forms/stats.htm");
+	});
+
+	$("#load").click(function() {
+		$("#container").load("forms/character_list.htm");
+	});
+}());
+</script>
