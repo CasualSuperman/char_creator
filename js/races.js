@@ -3,7 +3,7 @@
 		new race("Human", 0, [+0, +0, +0, +0, +0, +0], []),
 		new race("Dwarf", 0, [+0, +2, +0, +0, +0, -2], [
 			RaceAbility.Darkvision(60),
-			RaceAbility.RacialResistBonus("Poison", "2", "poison")
+			RaceAbility.RacialResistBonus("Poison", 2, "poison"),
 		])
 	];
 
@@ -16,7 +16,7 @@
 			"dex": mods[2],
 			"int": mods[3],
 			"wis": mods[4],
-			"cha": mods[5]
+			"cha": mods[5],
 		};
 		this.abilities = abilities;
 
@@ -57,7 +57,7 @@
 			"Small: As Small creatures, they get +1 size bonus to Armor Class, a +1 size bonus on attack rolls, and a +4 size bonus on Hide checks, but they use smaller weapons than humans use, and lifting and carrying limits are three-quarters of those of a Medium character.",
 			"Medium: As Medium creatures, there are no special bonuses or penalties due to size.",
 			"",
-			""
+			"",
 		][mod+2];
 	}
 

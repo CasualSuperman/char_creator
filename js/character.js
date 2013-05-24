@@ -6,7 +6,7 @@
 			"dex": null,
 			"int": null,
 			"wis": null,
-			"cha": null
+			"cha": null,
 		};
 
 		this.race = null;
@@ -17,6 +17,8 @@
 			height: null,
 			weight: null
 		};
+
+		this.skills = null;
 	};
 
 	character.prototype.toString = function() {

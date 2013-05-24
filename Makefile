@@ -10,4 +10,4 @@ js: main.js
 
 main.js: js/index.js js/character.js js/progress.js js/abilities.js js/races.js
 	@echo -e "JS\tmain.js"
-	@closure --js $^ > main.js
+	@closure --language_in=ECMASCRIPT5 --js $^ > main.js
